@@ -73,6 +73,8 @@ form{display:flex;flex-direction:column;height:100%;margin:0}
 .toolbar a.q:hover{background:var(--link-hover-bg)}
 .toolbar a.icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;font-size:14px;line-height:1}
 .toolbar a.q:focus-visible,.toolbar .btn:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+.filename-input{width:110px;font:inherit;padding:4px 4px;border:none;border-bottom:1px solid color-mix(in srgb, var(--bar-color) 20%, transparent);border-radius:0;background:transparent;color:var(--bar-color);text-align:left;transition:border-color .15s;box-sizing:border-box;outline:none}
+.filename-input:hover,.filename-input:focus{border-bottom-color:color-mix(in srgb, var(--bar-color) 50%, transparent)}
 .dd{position:relative;display:inline-block}
 .dd>a.q{display:inline-block;padding:5px 8px}
 .menu{display:none;position:absolute;right:0;bottom:calc(100% + 8px);background:var(--menu-bg);border:var(--menu-border);border-radius:var(--menu-radius);box-shadow:var(--menu-shadow);padding:6px;min-width:160px;max-width:calc(100vw - 12px);white-space:nowrap;text-align:left;z-index:1000;font-family:var(--bar-font);font-size:var(--bar-font-size);color:var(--menu-color)}
@@ -146,6 +148,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 #text{font-size:var(--editor-font-size,16px);padding:8px;border-bottom:var(--editor-border)}
 .toolbar a.icon{width:34px;height:34px;font-size:16px}
 .dd>a.q{padding:8px 10px}
+.filename-input{padding:6px 4px;width:100px}
 .credit,.counts{font-size:10px}.credit{padding-left:8px}
 .menu,:root[data-theme=classic] .menu{top:calc(100% + 8px);bottom:auto}
 .menu a.q,.theme-opt,.tp-opt{padding:8px}
@@ -165,6 +168,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 <input type="button" class="btn classic-only" value="Download &amp; Save" data-a="download">
 <input type="button" class="btn non-classic" value="Export" data-a="download">
 <input type="button" class="btn non-classic" value="Import" data-a="import">
+<input type="text" class="filename-input non-classic" id="fileName" value="text.txt" spellcheck="false" aria-label="File name">
 <a class="q icon classic-only" role="button" tabindex="0" aria-label="Scroll to Top" data-a="top">&uarr;</a>
 <a class="q icon classic-only" role="button" tabindex="0" aria-label="Scroll to Bottom" data-a="bottom">&darr;</a>
 <span class="dd classic-only">
@@ -242,7 +246,6 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
     for (var i = 0; i < m.length; i++) m[i].classList.remove('open');
   }
 
-  /* Position an open menu so it stays fully inside the viewport. */
   function positionMenu(m) {
     var margin = 8;
     m.style.left = '';
@@ -305,34 +308,16 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 
   function isClassic() { return root.getAttribute('data-theme') === 'classic'; }
 
-  function download(e) {
-    var blob = new Blob([ta.value], { type: 'text/plain;charset=utf-8' });
-    
-    // Check if Shift key is held and the API is supported
-    if (e && e.shiftKey && window.showSaveFilePicker) {
-      window.showSaveFilePicker({
-        suggestedName: 'text.txt',
-        types: [{ description: 'Text File', accept: { 'text/plain': ['.txt'] } }]
-      }).then(function (handle) {
-        return handle.createWritable();
-      }).then(function (writable) {
-        return writable.write(blob).then(function () {
-          return writable.close();
-        });
-      }).catch(function (err) {
-        if (err.name !== 'AbortError') {
-          console.error(err);
-          alert('Could not save the file.');
-        }
-      });
-    } else {
-      // Standard automatic download
-      var url = URL.createObjectURL(blob);
-      var a = doc.createElement('a');
-      a.href = url; a.download = 'text.txt';
-      doc.body.appendChild(a); a.click(); doc.body.removeChild(a);
-      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-    }
+  function download() {
+    var fnInput = doc.getElementById('fileName');
+    var name = fnInput ? fnInput.value.trim() : '';
+    if (!name) name = 'text.txt';
+
+    var url = URL.createObjectURL(new Blob([ta.value], { type: 'text/plain;charset=utf-8' }));
+    var a = doc.createElement('a');
+    a.href = url; a.download = name;
+    doc.body.appendChild(a); a.click(); doc.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   }
 
   function popup() {
@@ -351,6 +336,14 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
       ta.setSelectionRange(0, 0);
       resetHist();
       updateCounts();
+      
+      var fnInput = doc.getElementById('fileName');
+      if (fnInput) {
+        fnInput.value = file.name;
+        settings.fileName = file.name;
+        saveSettings();
+      }
+      
       ta.focus();
     }
     function fail(err) {
@@ -366,7 +359,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
   }
 
   var actions = {
-    download: function(e) { download(e); },
+    download: function() { download(); },
     top: function () { ta.scrollTop = 0; },
     bottom: function () { ta.scrollTop = ta.scrollHeight; },
     words: function () {
@@ -453,7 +446,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
       if (!was) { m.classList.add('open'); positionMenu(m); }
       return;
     }
-    if (actions[a]) { actions[a](e); if (a === 'words' || a === 'chars' || a === 'popup' || a === 'copy' || a === 'cut') closeMenus(); }
+    if (actions[a]) { actions[a](); if (a === 'words' || a === 'chars' || a === 'popup' || a === 'copy' || a === 'cut') closeMenus(); }
   });
 
   window.addEventListener('resize', function () {
@@ -464,7 +457,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
   doc.addEventListener('keydown', function (e) {
     if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === 's' || e.key === 'S')) {
       e.preventDefault();
-      download(e);
+      download();
     }
   });
 
@@ -626,6 +619,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
     if (FONTS.indexOf(s.font) < 0) s.font = 'mono';
     s.size = normalizeSize(s.size);
     if (typeof s.customFont !== 'string') s.customFont = '';
+    if (typeof s.fileName !== 'string' || !s.fileName.trim()) s.fileName = 'text.txt';
     s.sameFooter = s.sameFooter !== false;
     return s;
   }
@@ -693,6 +687,8 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
       ci.hidden = !isCustom;
       if (isCustom && ci.value !== settings.customFont) ci.value = settings.customFont || '';
     }
+    var fn = doc.getElementById('fileName');
+    if (fn) fn.value = settings.fileName;
   }
 
   var sameFooterCb = doc.getElementById('sameFooter');
@@ -772,6 +768,23 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
     });
     customFontInput.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') { e.preventDefault(); customFontInput.blur(); }
+    });
+  }
+
+  var fileNameInput = doc.getElementById('fileName');
+  if (fileNameInput) {
+    fileNameInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        fileNameInput.blur();
+      }
+    });
+    fileNameInput.addEventListener('change', function () {
+      var val = fileNameInput.value.trim();
+      if (!val) val = 'text.txt';
+      fileNameInput.value = val;
+      settings.fileName = val;
+      saveSettings();
     });
   }
 
