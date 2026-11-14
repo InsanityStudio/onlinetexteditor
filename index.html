@@ -69,7 +69,7 @@ form{display:flex;flex-direction:column;height:100%;margin:0}
 .toolbar .btn{font:inherit;padding:var(--btn-padding);border:var(--btn-border);border-radius:var(--btn-radius);background:var(--btn-bg);color:var(--btn-color);cursor:pointer;transition:background .15s,border-color .15s}
 .toolbar .btn:hover{background:var(--btn-hover-bg);border-color:var(--btn-hover-border)}
 .toolbar .btn:active{background:var(--btn-hover-bg)}
-.toolbar a.q{color:var(--link-color);text-decoration:none;border-radius:var(--icon-radius);transition:background .15s}
+.toolbar a.q{color:var(--link-color);text-decoration:none;border-radius:var(--icon-radius);transition:background .15s;cursor:pointer}
 .toolbar a.q:hover{background:var(--link-hover-bg)}
 .toolbar a.icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;font-size:14px;line-height:1}
 .toolbar a.q:focus-visible,.toolbar .btn:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
@@ -128,7 +128,7 @@ form{display:flex;flex-direction:column;height:100%;margin:0}
 :root[data-theme=classic] .toolbar{display:block;font-family:inherit;font-size:inherit}
 :root[data-theme=classic] .toolbar>*+*{margin-left:4px}
 :root[data-theme=classic] .toolbar .btn{all:revert}
-:root[data-theme=classic] .toolbar a.q{color:#00e;text-decoration:underline}
+:root[data-theme=classic] .toolbar a.q{color:#00e;text-decoration:underline;cursor:pointer}
 :root[data-theme=classic] .toolbar a.icon{display:inline;width:auto;height:auto;font-size:inherit;line-height:normal;padding:0;text-decoration:none}
 :root[data-theme=classic] .dd>a.q{padding:0}
 :root[data-theme=classic] .menu{right:0;bottom:130%;width:16ex;min-width:0;line-height:1.9;padding:0 0 .5ex .8ex;border-radius:0;box-shadow:none;font-family:inherit;font-size:inherit}
@@ -162,27 +162,27 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 <form id="textform" onsubmit="return false">
 <textarea id="text" name="text" spellcheck="true">Welcome to onlinetexteditor, formerly editpad.org between 2007-2020 and onlinetexteditor.com between 2021-2025. But now, it's here!</textarea>
 <div class="toolbar">
-<input type="button" class="btn classic-only" value="Download &amp; Save" title="Download &amp; Save" data-a="download">
-<input type="button" class="btn non-classic" value="Export" title="Export (Ctrl+S)" data-a="download">
-<input type="button" class="btn non-classic" value="Import" title="Import a text file" data-a="import">
-<a class="q icon classic-only" href="#" title="Scroll to Top" data-a="top">&uarr;</a>
-<a class="q icon classic-only" href="#" title="Scroll to Bottom" data-a="bottom">&darr;</a>
+<input type="button" class="btn classic-only" value="Download &amp; Save" data-a="download">
+<input type="button" class="btn non-classic" value="Export" data-a="download">
+<input type="button" class="btn non-classic" value="Import" data-a="import">
+<a class="q icon classic-only" role="button" tabindex="0" aria-label="Scroll to Top" data-a="top">&uarr;</a>
+<a class="q icon classic-only" role="button" tabindex="0" aria-label="Scroll to Bottom" data-a="bottom">&darr;</a>
 <span class="dd classic-only">
-<a class="q" href="#" rel="nofollow" title="More Options" data-a="menu" data-m="more-menu">more&nbsp;&raquo;</a>
+<a class="q" role="button" tabindex="0" rel="nofollow" data-a="menu" data-m="more-menu">more&nbsp;&raquo;</a>
 <span class="menu" id="more-menu">
-<a href="#" class="menu-close" data-a="close-menu" title="Close"><img border="0" src="https://web.archive.org/web/20251231173911im_/https://www.onlinetexteditor.com/images/x2.gif" width="12" height="12" alt="Close menu" align="right" class="cb"></a>
-<a class="q" href="#" title="New Layout" data-a="new-layout">New Layout</a>
-<div class="copy-cut"><a class="q" href="#" title="Copy to Clipboard" data-a="copy">Copy</a> or <a class="q" href="#" title="Cut to Clipboard" data-a="cut">Cut</a></div>
-<a class="q" href="#" title="Word Count" data-a="words">Word Count</a>
-<a class="q" href="#" title="Character Count" data-a="chars">Character Count</a>
-<a class="q" href="#" title="Open As PopUp" data-a="popup">Open As PopUp</a>
-<a class="q" href="./" target="_blank" title="Open a new Tab">New Tab</a>
+<a role="button" tabindex="0" class="menu-close" data-a="close-menu"><img border="0" src="https://web.archive.org/web/20251231173911im_/https://www.onlinetexteditor.com/images/x2.gif" width="12" height="12" alt="Close menu" align="right" class="cb"></a>
+<a class="q" role="button" tabindex="0" data-a="new-layout">New Layout</a>
+<div class="copy-cut"><a class="q" role="button" tabindex="0" data-a="copy">Copy</a> or <a class="q" role="button" tabindex="0" data-a="cut">Cut</a></div>
+<a class="q" role="button" tabindex="0" data-a="words">Word Count</a>
+<a class="q" role="button" tabindex="0" data-a="chars">Character Count</a>
+<a class="q" role="button" tabindex="0" data-a="popup">Open As PopUp</a>
+<a class="q" href="./" target="_blank">New Tab</a>
 </span>
 </span>
 <span class="dd non-classic">
-<a class="q" href="#" rel="nofollow" title="Customise" data-a="menu" data-m="theme-menu">customise&nbsp;&raquo;</a>
+<a class="q" role="button" tabindex="0" rel="nofollow" data-a="menu" data-m="theme-menu">customise&nbsp;&raquo;</a>
 <span class="menu" id="theme-menu">
-<a href="#" class="menu-close" data-a="close-menu" title="Close"><img border="0" src="https://web.archive.org/web/20251231173911im_/https://www.onlinetexteditor.com/images/x2.gif" width="12" height="12" alt="Close menu" align="right" class="cb"></a>
+<a role="button" tabindex="0" class="menu-close" data-a="close-menu"><img border="0" src="https://web.archive.org/web/20251231173911im_/https://www.onlinetexteditor.com/images/x2.gif" width="12" height="12" alt="Close menu" align="right" class="cb"></a>
 <div class="tp">
 <div class="tp-group">
 <div class="tp-label">Layout</div>
@@ -207,7 +207,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 <option value="helvetica">Helvetica</option>
 <option value="custom">Custom (Google Fonts)</option>
 </select>
-<span class="tp-size-wrap"><input type="number" class="tp-size" id="sizeInput" min="8" max="72" step="1" inputmode="numeric" placeholder="auto" aria-label="Font size in pixels (empty for default)" title="Font size in px (empty = default)"></span>
+<span class="tp-size-wrap"><input type="number" class="tp-size" id="sizeInput" min="8" max="72" step="1" inputmode="numeric" placeholder="auto" aria-label="Font size in pixels (empty for default)"></span>
 </div>
 <input type="text" class="tp-input" id="customFontInput" placeholder="Google Font name, e.g. Roboto" hidden>
 </div>
@@ -224,7 +224,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 </span>
 </span>
 <span class="counts" id="counts"></span>
-<span class="credit"><a href="https://github.com/InsanityStudio" target="_blank" title="InsanityStudio" rel="nofollow"><img src="https://web.archive.org/web/20251231173911im_/https://www.onlinetexteditor.com/images/editpad.gif" alt="OnlineTextEditor - Free Online Text Editor" width="10" height="10" border="0" align="bottom"></a>&nbsp;InsanityStudio</span>
+<span class="credit"><a href="https://github.com/InsanityStudio" target="_blank" rel="nofollow" aria-label="InsanityStudio"><img src="https://web.archive.org/web/20251231173911im_/https://www.onlinetexteditor.com/images/editpad.gif" alt="OnlineTextEditor - Free Online Text Editor" width="10" height="10" border="0" align="bottom"></a>&nbsp;InsanityStudio</span>
 </div>
 <input type="file" id="fileInput" accept=".txt,.text,.md,.markdown,.csv,.tsv,.log,.json,.xml,.html,.htm,.css,.js,.mjs,.ts,.tsx,.jsx,.ini,.cfg,.conf,.yaml,.yml,.toml,.env,.sh,.bat,.py,.rb,.java,.c,.cpp,.h,.go,.rs,.php,.sql,text/*,application/json,application/xml,application/javascript" hidden>
 </form>
