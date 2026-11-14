@@ -305,12 +305,34 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 
   function isClassic() { return root.getAttribute('data-theme') === 'classic'; }
 
-  function download() {
-    var url = URL.createObjectURL(new Blob([ta.value], { type: 'text/plain;charset=utf-8' }));
-    var a = doc.createElement('a');
-    a.href = url; a.download = 'text.txt';
-    doc.body.appendChild(a); a.click(); doc.body.removeChild(a);
-    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  function download(e) {
+    var blob = new Blob([ta.value], { type: 'text/plain;charset=utf-8' });
+    
+    // Check if Shift key is held and the API is supported
+    if (e && e.shiftKey && window.showSaveFilePicker) {
+      window.showSaveFilePicker({
+        suggestedName: 'text.txt',
+        types: [{ description: 'Text File', accept: { 'text/plain': ['.txt'] } }]
+      }).then(function (handle) {
+        return handle.createWritable();
+      }).then(function (writable) {
+        return writable.write(blob).then(function () {
+          return writable.close();
+        });
+      }).catch(function (err) {
+        if (err.name !== 'AbortError') {
+          console.error(err);
+          alert('Could not save the file.');
+        }
+      });
+    } else {
+      // Standard automatic download
+      var url = URL.createObjectURL(blob);
+      var a = doc.createElement('a');
+      a.href = url; a.download = 'text.txt';
+      doc.body.appendChild(a); a.click(); doc.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    }
   }
 
   function popup() {
@@ -344,7 +366,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
   }
 
   var actions = {
-    download: download,
+    download: function(e) { download(e); },
     top: function () { ta.scrollTop = 0; },
     bottom: function () { ta.scrollTop = ta.scrollHeight; },
     words: function () {
@@ -431,7 +453,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
       if (!was) { m.classList.add('open'); positionMenu(m); }
       return;
     }
-    if (actions[a]) { actions[a](); if (a === 'words' || a === 'chars' || a === 'popup' || a === 'copy' || a === 'cut') closeMenus(); }
+    if (actions[a]) { actions[a](e); if (a === 'words' || a === 'chars' || a === 'popup' || a === 'copy' || a === 'cut') closeMenus(); }
   });
 
   window.addEventListener('resize', function () {
@@ -442,7 +464,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
   doc.addEventListener('keydown', function (e) {
     if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === 's' || e.key === 'S')) {
       e.preventDefault();
-      download();
+      download(e);
     }
   });
 
