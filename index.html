@@ -73,7 +73,7 @@ form{display:flex;flex-direction:column;height:100%;margin:0}
 .toolbar a.q:hover{background:var(--link-hover-bg)}
 .toolbar a.icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;font-size:14px;line-height:1}
 .toolbar a.q:focus-visible,.toolbar .btn:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
-.filename-input{width:110px;font:inherit;padding:4px 4px;border:none;border-bottom:1px solid color-mix(in srgb, var(--bar-color) 20%, transparent);border-radius:0;background:transparent;color:var(--bar-color);text-align:left;transition:border-color .15s;box-sizing:border-box;outline:none}
+.filename-input{flex:1 1 auto;min-width:80px;width:auto;font:inherit;padding:4px 4px;border:none;border-bottom:1px solid color-mix(in srgb, var(--bar-color) 20%, transparent);border-radius:0;background:transparent;color:var(--bar-color);text-align:left;transition:border-color .15s;box-sizing:border-box;outline:none}
 .filename-input:hover,.filename-input:focus{border-bottom-color:color-mix(in srgb, var(--bar-color) 50%, transparent)}
 .dd{position:relative;display:inline-block}
 .dd>a.q{display:inline-block;padding:5px 8px}
@@ -148,7 +148,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 #text{font-size:var(--editor-font-size,16px);padding:8px;border-bottom:var(--editor-border)}
 .toolbar a.icon{width:34px;height:34px;font-size:16px}
 .dd>a.q{padding:8px 10px}
-.filename-input{padding:6px 4px;width:100px}
+.filename-input{flex:1 1 auto;min-width:80px;width:auto;padding:6px 4px}
 .credit,.counts{font-size:10px}.credit{padding-left:8px}
 .menu,:root[data-theme=classic] .menu{top:calc(100% + 8px);bottom:auto}
 .menu a.q,.theme-opt,.tp-opt{padding:8px}
@@ -168,21 +168,6 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 <input type="button" class="btn classic-only" value="Download &amp; Save" data-a="download">
 <input type="button" class="btn non-classic" value="Export" data-a="download">
 <input type="button" class="btn non-classic" value="Import" data-a="import">
-<input type="text" class="filename-input non-classic" id="fileName" value="text.txt" spellcheck="false" aria-label="File name">
-<a class="q icon classic-only" role="button" tabindex="0" aria-label="Scroll to Top" data-a="top">&uarr;</a>
-<a class="q icon classic-only" role="button" tabindex="0" aria-label="Scroll to Bottom" data-a="bottom">&darr;</a>
-<span class="dd classic-only">
-<a class="q" role="button" tabindex="0" rel="nofollow" data-a="menu" data-m="more-menu">more&nbsp;&raquo;</a>
-<span class="menu" id="more-menu">
-<a role="button" tabindex="0" class="menu-close" data-a="close-menu"><img border="0" src="https://web.archive.org/web/20251231173911im_/https://www.onlinetexteditor.com/images/x2.gif" width="12" height="12" alt="Close menu" align="right" class="cb"></a>
-<a class="q" role="button" tabindex="0" data-a="new-layout">New Layout</a>
-<div class="copy-cut"><a class="q" role="button" tabindex="0" data-a="copy">Copy</a> or <a class="q" role="button" tabindex="0" data-a="cut">Cut</a></div>
-<a class="q" role="button" tabindex="0" data-a="words">Word Count</a>
-<a class="q" role="button" tabindex="0" data-a="chars">Character Count</a>
-<a class="q" role="button" tabindex="0" data-a="popup">Open As PopUp</a>
-<a class="q" href="./" target="_blank">New Tab</a>
-</span>
-</span>
 <span class="dd non-classic">
 <a class="q" role="button" tabindex="0" rel="nofollow" data-a="menu" data-m="theme-menu">customise&nbsp;&raquo;</a>
 <span class="menu" id="theme-menu">
@@ -225,6 +210,21 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 <button type="button" class="tp-opt" data-footer-opt="dark">Dark</button>
 </div>
 </div>
+</span>
+</span>
+<input type="text" class="filename-input non-classic" id="fileName" value="text.txt" spellcheck="false" aria-label="File name">
+<a class="q icon classic-only" role="button" tabindex="0" aria-label="Scroll to Top" data-a="top">&uarr;</a>
+<a class="q icon classic-only" role="button" tabindex="0" aria-label="Scroll to Bottom" data-a="bottom">&darr;</a>
+<span class="dd classic-only">
+<a class="q" role="button" tabindex="0" rel="nofollow" data-a="menu" data-m="more-menu">more&nbsp;&raquo;</a>
+<span class="menu" id="more-menu">
+<a role="button" tabindex="0" class="menu-close" data-a="close-menu"><img border="0" src="https://web.archive.org/web/20251231173911im_/https://www.onlinetexteditor.com/images/x2.gif" width="12" height="12" alt="Close menu" align="right" class="cb"></a>
+<a class="q" role="button" tabindex="0" data-a="new-layout">New Layout</a>
+<div class="copy-cut"><a class="q" role="button" tabindex="0" data-a="copy">Copy</a> or <a class="q" role="button" tabindex="0" data-a="cut">Cut</a></div>
+<a class="q" role="button" tabindex="0" data-a="words">Word Count</a>
+<a class="q" role="button" tabindex="0" data-a="chars">Character Count</a>
+<a class="q" role="button" tabindex="0" data-a="popup">Open As PopUp</a>
+<a class="q" href="./" target="_blank">New Tab</a>
 </span>
 </span>
 <span class="counts" id="counts"></span>
@@ -470,7 +470,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
   function renderCounts() {
     countRaf = 0;
     var v = ta.value, w = wordCount(v), c = v.length;
-    counts.textContent = w + (w === 1 ? ' word' : ' words') + ' \u00b7 ' + c + (c === 1 ? ' character' : ' characters');
+    counts.textContent = w + (w === 1 ? ' word' : ' words') + ' \u00b7 ' + c + (c === 1 ? ' char' : ' chars');
   }
   function updateCounts() {
     if (isClassic() || countRaf) return;
