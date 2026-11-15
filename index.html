@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="custom" data-editor="parchment" data-footer="parchment" data-font="mono">
+<html lang="en" data-theme="custom" data-layout="redux" data-editor="parchment" data-footer="parchment" data-font="mono">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -13,16 +13,18 @@
   if (!s) {
     var t = null;
     try { t = localStorage.getItem('ote-theme'); } catch (e) {}
-    if (t === 'classic') s = { theme: 'classic' };
-    else if (t === 'dark') s = { theme: 'custom', editor: 'dark', sameFooter: true, footer: 'dark' };
-    else if (t === 'dark-footer') s = { theme: 'custom', editor: 'parchment', sameFooter: false, footer: 'dark' };
-    else if (t === 'light') s = { theme: 'custom', editor: 'parchment', sameFooter: false, footer: 'light' };
-    else s = {};
+    if (t === 'classic') s = { theme: 'classic', layout: 'classic' };
+    else if (t === 'dark') s = { theme: 'custom', layout: 'redux', editor: 'dark', sameFooter: true, footer: 'dark' };
+    else if (t === 'dark-footer') s = { theme: 'custom', layout: 'redux', editor: 'parchment', sameFooter: false, footer: 'dark' };
+    else if (t === 'light') s = { theme: 'custom', layout: 'redux', editor: 'parchment', sameFooter: false, footer: 'light' };
+    else s = { theme: 'custom', layout: 'redux', editor: 'parchment', footer: 'parchment', font: 'mono', size: 'default', sameFooter: true };
   }
   if (s.theme === 'classic') {
     r.setAttribute('data-theme', 'classic');
+    r.setAttribute('data-layout', 'classic');
   } else {
     r.setAttribute('data-theme', 'custom');
+    r.setAttribute('data-layout', s.layout === 'modern' || s.layout === 'classic' ? s.layout : 'redux');
     r.setAttribute('data-editor', s.editor === 'light' || s.editor === 'dark' ? s.editor : 'parchment');
     r.setAttribute('data-font', s.font || 'mono');
     if (s.font === 'custom' && s.customFont) {
@@ -53,7 +55,7 @@
 :root[data-font=helvetica]{--editor-font:"Helvetica Neue",Helvetica,Arial,sans-serif}
 :root[data-font=custom]{--editor-font:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
 /* Footer/menu palettes (parchment is a darker eee8aa with matching parchment menu) */
-:root[data-footer=parchment]{--bar-bg:#e2dc9c;--bar-border-top:1px solid #cfc87e;--bar-color:#222;--btn-bg:#f3edba;--btn-border:1px solid #c9c184;--btn-color:#222;--btn-hover-bg:#ece5a6;--btn-hover-border:#b3aa63;--link-color:#3b3421;--link-hover-bg:#d7d08c;--menu-bg:#e8e1a4;--menu-border:1px solid #bdb56f;--menu-color:#222;--menu-hover-bg:#ddd590;--credit-color:#6e6844;--focus:#7aa7ff}
+:root[data-footer=parchment]{--bar-bg:#e2dc9c;--bar-border-top:1px solid #cfc87e;--bar-color:#222;--btn-bg:#f3edba;--btn-border:1px solid #c9c184;--btn-color:#222;--btn-hover-bg:#ece5a6;--btn-hover-border:#b3aa63;--link-color:#3b3421;--link-hover-bg:#d7d08c;--menu-bg:#e8e1a4;--menu-border:1px solid #bdb56f;--menu-color:#222;--menu-hover-bg:#ddd590;--credit-color:#6e6844;--focus:#b3aa63}
 :root[data-footer=light]{--bar-bg:#f7f7f7;--bar-border-top:1px solid #e3e3e3;--bar-color:#222;--btn-bg:#fff;--btn-border:1px solid #cfcfcf;--btn-color:#222;--btn-hover-bg:#f0f0f0;--btn-hover-border:#b9b9b9;--link-color:#333;--link-hover-bg:#e9e9e9;--menu-bg:#fff;--menu-border:1px solid #dcdcdc;--menu-color:#333;--menu-hover-bg:#f0f0f0;--credit-color:#8a8a8a;--focus:#7aa7ff}
 :root[data-footer=dark]{--bar-bg:#191a1d;--bar-border-top:1px solid #2c2d31;--bar-color:#d4d4d4;--btn-bg:#252629;--btn-border:1px solid #3a3b3f;--btn-color:#dcdcdc;--btn-hover-bg:#2d2e32;--btn-hover-border:#4a4b50;--link-color:#c8c8c8;--link-hover-bg:#2a2b2f;--menu-bg:#151619;--menu-border:1px solid #2c2d31;--menu-color:#d4d4d4;--menu-hover-bg:#242528;--menu-shadow:0 6px 16px rgba(0,0,0,.55);--credit-color:#7d7d7d;--focus:#9a9a9a}
 :root[data-theme=classic]{--bg:#fff;--page-color:#000;--editor-bg:#eee8aa;--editor-border:1px dotted #000;--editor-border-bottom:1px dotted #000;--editor-color:#000;--bar-bg:transparent;--bar-border-top:0;--bar-color:#000;--bar-padding:0 4px 16px;--bar-gap:0;--link-color:#00e;--link-hover-bg:transparent;--icon-radius:0;--menu-bg:#fff;--menu-border:1px solid #369;--menu-radius:0;--menu-shadow:none;--menu-color:#000;--menu-hover-bg:transparent;--menu-item-padding:0;--menu-item-radius:0;--credit-color:#000;--focus:#00e}
@@ -84,24 +86,23 @@ form{display:flex;flex-direction:column;height:100%;margin:0}
 .theme-opt{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .theme-opt::after{content:"";width:1em;text-align:right}
 .theme-opt[aria-pressed=true]{font-weight:600}
-.theme-opt[aria-pressed=true]::after{content:"\2713";opacity:.7}
 .counts{margin-left:auto;font-size:11px;letter-spacing:.04em;color:var(--credit-color);user-select:none;white-space:nowrap}
-:root:not([data-theme=classic]) .classic-only{display:none!important}
-:root[data-theme=classic] .non-classic{display:none!important}
-:root[data-theme=classic] .counts{display:none}
+:root[data-layout=modern] .only-classic{display:none!important}
+:root[data-layout=redux] .only-classic{display:none!important}
+:root[data-layout=classic] .only-modern-redux{display:none!important}
+:root[data-layout=classic] .counts{display:none}
 .credit{display:none}
-:root[data-theme=classic] .credit{display:block;position:fixed;bottom:12px;right:2px;width:120px;text-align:right;font-family:arial;font-size:11px;color:#000;pointer-events:auto;user-select:none}
+:root[data-layout=classic] .credit{display:block;position:fixed;bottom:12px;right:2px;width:120px;text-align:right;font-family:arial;font-size:11px;color:var(--credit-color);pointer-events:auto;user-select:none}
 
 /* Theme settings panel (custom theme only) */
-.tp{width:220px;max-width:100%;box-sizing:border-box}
+.tp{width:240px;max-width:100%;box-sizing:border-box}
 .tp-group{margin:0 0 7px}
 .tp-group:last-child{margin:0}
 .tp-group[hidden]{display:none!important}
 .tp-label{font-size:11px;letter-spacing:.02em;color:var(--credit-color);margin:0 0 4px 2px}
 .tp-opt{display:inline-block;padding:4px 10px;margin:0 4px 4px 0;border:var(--btn-border);border-radius:var(--btn-radius);background:var(--btn-bg);color:var(--btn-color);font:inherit;cursor:pointer;transition:background .15s,border-color .15s}
 .tp-opt:hover{background:var(--btn-hover-bg);border-color:var(--btn-hover-border)}
-.tp-opt[aria-pressed=true]{background:var(--btn-hover-bg);border-color:var(--btn-hover-border);font-weight:600}
-.tp-opt[aria-pressed=true]::after{content:"\2713";margin-left:5px;opacity:.65}
+.tp-opt[aria-pressed=true]{background:var(--btn-hover-bg);border-color:var(--focus);box-shadow:inset 0 0 0 1px var(--focus);font-weight:700}
 .tp-opt:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
 .tp-check{display:flex;align-items:center;gap:6px;padding:2px;cursor:pointer;user-select:none}
 .tp-check input{accent-color:var(--focus);margin:0}
@@ -123,24 +124,68 @@ form{display:flex;flex-direction:column;height:100%;margin:0}
 .tp-size:focus{outline:0}
 
 .menu-close{display:none}
-:root[data-theme=classic] .menu-close{display:inline}
-:root[data-theme=classic] .menu-close img{display:inline;vertical-align:top;border:0}
+:root[data-layout=classic] .menu-close{display:inline}
+:root[data-layout=classic] .menu-close img{display:inline;vertical-align:top;border:0}
 
-:root[data-theme=classic] #text{padding:2px;font:13.3333px monospace}
-:root[data-theme=classic] .toolbar{display:block;font-family:inherit;font-size:inherit}
-:root[data-theme=classic] .toolbar>*+*{margin-left:4px}
-:root[data-theme=classic] .toolbar .btn{all:revert}
-:root[data-theme=classic] .toolbar a.q{color:#00e;text-decoration:underline;cursor:pointer}
-:root[data-theme=classic] .toolbar a.icon{display:inline;width:auto;height:auto;font-size:inherit;line-height:normal;padding:0;text-decoration:none}
-:root[data-theme=classic] .dd>a.q{padding:0}
-:root[data-theme=classic] .menu{right:0;bottom:130%;width:16ex;min-width:0;line-height:1.9;padding:0 0 .5ex .8ex;border-radius:0;box-shadow:none;font-family:inherit;font-size:inherit}
-:root[data-theme=classic] .menu a.q,
-:root[data-theme=classic] .theme-opt{display:block;padding:0;color:#00e;font-weight:400;background:transparent;text-decoration:underline}
-:root[data-theme=classic] .copy-cut{display:block}
-:root[data-theme=classic] .copy-cut a.q{display:inline;width:auto}
-:root[data-theme=classic] .theme-opt[aria-pressed=true]{font-weight:700}
-:root[data-theme=classic] .theme-opt::after{content:"";width:auto}
-:root[data-theme=classic] .theme-opt[aria-pressed=true]::after{content:" \2713"}
+:root[data-layout=classic] #text{padding:2px;font:13.3333px monospace}
+:root[data-layout=redux] #text{padding:2px;font-family:var(--editor-font, monospace);font-size:var(--editor-font-size, 13.3333px)}
+:root[data-layout=classic] .toolbar{display:block;font-family:inherit;font-size:inherit;padding:0 4px 16px}
+:root[data-layout=redux] .toolbar{font-family:inherit;font-size:var(--bar-font-size)}
+:root[data-layout=classic] .toolbar>*+*{margin-left:4px}
+:root[data-layout=classic] .toolbar .btn{all:revert}
+:root[data-layout=redux] .toolbar .btn{border-radius:0}
+:root[data-layout=classic] .toolbar a.q{color:#00e;text-decoration:underline;cursor:pointer}
+:root[data-layout=redux] .toolbar a.q{color:var(--link-color);text-decoration:underline;cursor:pointer}
+:root[data-layout=classic] .toolbar a.icon{display:inline;width:auto;height:auto;font-size:inherit;line-height:normal;padding:0;text-decoration:none}
+:root[data-layout=classic] .dd>a.q{padding:0}
+:root[data-layout=classic] .menu{right:0;bottom:130%;width:16ex;min-width:0;line-height:1.9;padding:0 0 .5ex .8ex;border-radius:0;box-shadow:none;font-family:inherit;font-size:inherit}
+:root[data-layout=classic] .menu a.q{display:block;padding:0;color:#00e;font-weight:400;background:transparent;text-decoration:underline}
+:root[data-layout=classic] .copy-cut{display:block}
+:root[data-layout=classic] .copy-cut a.q{display:inline;width:auto}
+
+/* Redux specific tweaks */
+:root[data-layout=redux] .filename-input {
+  border: 1px solid color-mix(in srgb, var(--bar-color) 35%, transparent);
+  background: var(--btn-bg);
+  color: var(--btn-color);
+  padding: 3px 4px;
+  width: 120px;
+  font-family: inherit;
+  border-radius: 0;
+  outline: none;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+}
+:root[data-layout=redux] .filename-input:focus {
+  border-color: var(--focus);
+}
+:root[data-layout=redux] .menu {
+  border-radius: 0;
+  box-shadow: none;
+  border: 1px solid color-mix(in srgb, var(--bar-color) 30%, transparent);
+  padding: 8px;
+  font-family: inherit;
+  font-size: inherit;
+}
+:root[data-layout=redux] .tp-label {
+  font-family: inherit;
+  font-size: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+  margin: 0 0 4px 0;
+}
+:root[data-layout=redux] .tp-opt {
+  border-radius: 0;
+}
+:root[data-layout=redux] .tp-select,
+:root[data-layout=redux] .tp-size-wrap,
+:root[data-layout=redux] .tp-input {
+  border-radius: 0;
+}
+
+/* Classic theme menu styling */
+:root[data-layout=classic] .tp-opt{display:block;width:100%;margin:0;padding:0;border:0;background:transparent;color:#00e;text-decoration:underline;text-align:left;border-radius:0;font-weight:400;box-shadow:none}
+:root[data-layout=classic] .tp-opt[aria-pressed=true]{font-weight:700;background:transparent;border:0;box-shadow:none}
 
 @media (max-width:640px){
 form{flex-direction:column-reverse;height:var(--vvh,100%)}
@@ -150,14 +195,15 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 .dd>a.q{padding:8px 10px}
 .filename-input{flex:1 1 auto;min-width:80px;width:auto;padding:6px 4px}
 .credit,.counts{font-size:10px}.credit{padding-left:8px}
-.menu,:root[data-theme=classic] .menu{top:calc(100% + 8px);bottom:auto}
+.menu,:root[data-layout=classic] .menu{top:calc(100% + 8px);bottom:auto}
 .menu a.q,.theme-opt,.tp-opt{padding:8px}
 .tp-select,.tp-input{padding:7px 8px}
 .tp-size{width:36px;padding:7px 4px}
-:root[data-theme=classic] #text{font-size:16px;padding:8px}
-:root[data-theme=classic] .toolbar{padding-top:calc(6px + env(safe-area-inset-top,0px));padding-bottom:0}
-:root[data-theme=classic] .menu a.q,:root[data-theme=classic] .theme-opt{padding:8px}
-:root[data-theme=classic] .copy-cut a.q{padding:8px 4px}
+:root[data-layout=classic] #text{font-size:16px;padding:8px}
+:root[data-layout=redux] #text{font-size:var(--editor-font-size, 16px);padding:8px}
+:root[data-layout=classic] .toolbar{padding-top:calc(6px + env(safe-area-inset-top,0px));padding-bottom:0}
+:root[data-layout=classic] .menu a.q,:root[data-layout=classic] .theme-opt{padding:8px}
+:root[data-layout=classic] .copy-cut a.q{padding:8px 4px}
 }
 </style>
 </head>
@@ -165,10 +211,10 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 <form id="textform" onsubmit="return false">
 <textarea id="text" name="text" spellcheck="true">Welcome to onlinetexteditor, formerly editpad.org between 2007-2020 and onlinetexteditor.com between 2021-2025. But now, it's here!</textarea>
 <div class="toolbar">
-<input type="button" class="btn classic-only" value="Download &amp; Save" data-a="download">
-<input type="button" class="btn non-classic" value="Export" data-a="download">
-<input type="button" class="btn non-classic" value="Import" data-a="import">
-<span class="dd non-classic">
+<input type="button" class="btn only-classic" value="Download &amp; Save" data-a="download">
+<input type="button" class="btn only-modern-redux" value="Export" data-a="download">
+<input type="button" class="btn only-modern-redux" value="Import" data-a="import">
+<span class="dd only-modern-redux">
 <a class="q" role="button" tabindex="0" rel="nofollow" data-a="menu" data-m="theme-menu">customise&nbsp;&raquo;</a>
 <span class="menu" id="theme-menu">
 <a role="button" tabindex="0" class="menu-close" data-a="close-menu"><img border="0" src="https://web.archive.org/web/20251231173911im_/https://www.onlinetexteditor.com/images/x2.gif" width="12" height="12" alt="Close menu" align="right" class="cb"></a>
@@ -176,6 +222,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 <div class="tp-group">
 <div class="tp-label">Layout</div>
 <button type="button" class="tp-opt" data-layout-opt="modern">Modern</button>
+<button type="button" class="tp-opt" data-layout-opt="redux">Redux</button>
 <button type="button" class="tp-opt" data-layout-opt="classic">Classic</button>
 </div>
 <div class="tp-group">
@@ -212,10 +259,10 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
 </div>
 </span>
 </span>
-<input type="text" class="filename-input non-classic" id="fileName" value="text.txt" spellcheck="false" aria-label="File name">
-<a class="q icon classic-only" role="button" tabindex="0" aria-label="Scroll to Top" data-a="top">&uarr;</a>
-<a class="q icon classic-only" role="button" tabindex="0" aria-label="Scroll to Bottom" data-a="bottom">&darr;</a>
-<span class="dd classic-only">
+<input type="text" class="filename-input only-modern-redux" id="fileName" value="text.txt" spellcheck="false" aria-label="File name">
+<a class="q icon only-classic" role="button" tabindex="0" aria-label="Scroll to Top" data-a="top">&uarr;</a>
+<a class="q icon only-classic" role="button" tabindex="0" aria-label="Scroll to Bottom" data-a="bottom">&darr;</a>
+<span class="dd only-classic">
 <a class="q" role="button" tabindex="0" rel="nofollow" data-a="menu" data-m="more-menu">more&nbsp;&raquo;</a>
 <span class="menu" id="more-menu">
 <a role="button" tabindex="0" class="menu-close" data-a="close-menu"><img border="0" src="https://web.archive.org/web/20251231173911im_/https://www.onlinetexteditor.com/images/x2.gif" width="12" height="12" alt="Close menu" align="right" class="cb"></a>
@@ -306,12 +353,17 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
     return n;
   }
 
-  function isClassic() { return root.getAttribute('data-theme') === 'classic'; }
+  function isClassic() { return root.getAttribute('data-layout') === 'classic'; }
 
   function download() {
-    var fnInput = doc.getElementById('fileName');
-    var name = fnInput ? fnInput.value.trim() : '';
-    if (!name) name = 'text.txt';
+    var name = 'text.txt';
+    if (settings.layout !== 'classic') {
+      var fnInput = doc.getElementById('fileName');
+      if (fnInput) {
+        var val = fnInput.value.trim();
+        if (val) name = val;
+      }
+    }
 
     var url = URL.createObjectURL(new Blob([ta.value], { type: 'text/plain;charset=utf-8' }));
     var a = doc.createElement('a');
@@ -398,7 +450,7 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
       fileInput.click();
     },
     'new-layout': function () {
-      settings.theme = 'custom';
+      settings.layout = settings.prevLayout || 'redux';
       applySettings(); saveSettings(); closeMenus();
     },
     'close-menu': function () { closeMenus(); }
@@ -414,14 +466,13 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
     if (!el) { if (!e.target.closest('.dd')) closeMenus(); return; }
     if (el.tagName === 'A') e.preventDefault();
     if (el.hasAttribute('data-layout-opt')) {
-      var lv = el.getAttribute('data-layout-opt');
-      if (lv === 'classic') {
-        settings.theme = 'classic';
-        applySettings(); saveSettings(); closeMenus();
-      } else {
-        settings.theme = 'custom';
-        applySettings(); saveSettings();
+      var newLv = el.getAttribute('data-layout-opt');
+      if (newLv === 'classic' && settings.layout !== 'classic') {
+        settings.prevLayout = settings.layout;
       }
+      settings.layout = newLv;
+      applySettings(); saveSettings();
+      if (settings.layout === 'classic') closeMenus();
       return;
     }
     if (el.hasAttribute('data-editor-opt')) {
@@ -605,13 +656,18 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
     if (!s) {
       var t = null;
       try { t = localStorage.getItem('ote-theme'); } catch (e) {}
-      if (t === 'classic') s = { theme: 'classic' };
-      else if (t === 'dark') s = { theme: 'custom', editor: 'dark', sameFooter: true, footer: 'dark' };
-      else if (t === 'dark-footer') s = { theme: 'custom', editor: 'parchment', sameFooter: false, footer: 'dark' };
-      else if (t === 'light') s = { theme: 'custom', editor: 'parchment', sameFooter: false, footer: 'light' };
+      if (t === 'classic') s = { theme: 'classic', layout: 'classic' };
+      else if (t === 'dark') s = { theme: 'custom', layout: 'redux', editor: 'dark', sameFooter: true, footer: 'dark' };
+      else if (t === 'dark-footer') s = { theme: 'custom', layout: 'redux', editor: 'parchment', sameFooter: false, footer: 'dark' };
+      else if (t === 'light') s = { theme: 'custom', layout: 'redux', editor: 'parchment', sameFooter: false, footer: 'light' };
+      else s = { theme: 'custom', layout: 'redux', editor: 'parchment', footer: 'parchment', font: 'mono', size: 'default', sameFooter: true };
     }
     if (!s) s = {};
-    if (s.theme !== 'classic') s.theme = 'custom';
+    if (s.layout !== 'classic' && s.layout !== 'redux' && s.layout !== 'modern') {
+      s.layout = s.theme === 'classic' ? 'classic' : 'redux';
+    }
+    s.theme = s.layout === 'classic' ? 'classic' : 'custom';
+    if (typeof s.prevLayout !== 'string' || s.prevLayout === 'classic') s.prevLayout = 'redux';
     if (s.editor !== 'light' && s.editor !== 'dark') s.editor = 'parchment';
     if (s.footer !== 'parchment' && s.footer !== 'light' && s.footer !== 'dark') s.footer = s.editor;
     if (FONTS.indexOf(s.font) < 0) s.font = 'mono';
@@ -628,7 +684,8 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
   }
 
   function applySettings() {
-    if (settings.theme === 'classic') {
+    root.setAttribute('data-layout', settings.layout);
+    if (settings.layout === 'classic') {
       root.setAttribute('data-theme', 'classic');
       root.removeAttribute('data-editor');
       root.removeAttribute('data-footer');
@@ -652,20 +709,19 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
   }
 
   function syncThemeUI() {
-    var classic = isClassic();
     var lays = doc.querySelectorAll('[data-layout-opt]');
     for (var i = 0; i < lays.length; i++) {
-      var on = !classic && lays[i].getAttribute('data-layout-opt') === 'modern';
+      var on = lays[i].getAttribute('data-layout-opt') === settings.layout;
       lays[i].setAttribute('aria-pressed', on ? 'true' : 'false');
     }
     var eds = doc.querySelectorAll('[data-editor-opt]');
     for (var j = 0; j < eds.length; j++) {
-      var onE = !classic && eds[j].getAttribute('data-editor-opt') === settings.editor;
+      var onE = settings.layout !== 'classic' && eds[j].getAttribute('data-editor-opt') === settings.editor;
       eds[j].setAttribute('aria-pressed', onE ? 'true' : 'false');
     }
     var fts = doc.querySelectorAll('[data-footer-opt]');
     for (var k = 0; k < fts.length; k++) {
-      var onF = !classic && fts[k].getAttribute('data-footer-opt') === settings.footer;
+      var onF = settings.layout !== 'classic' && fts[k].getAttribute('data-footer-opt') === settings.footer;
       fts[k].setAttribute('aria-pressed', onF ? 'true' : 'false');
     }
     var cb = doc.getElementById('sameFooter');
@@ -691,6 +747,9 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
     sameFooterCb.addEventListener('change', function () {
       settings.theme = 'custom';
       settings.sameFooter = sameFooterCb.checked;
+      if (!settings.sameFooter) {
+        settings.footer = settings.editor;
+      }
       applySettings();
       saveSettings();
     });
