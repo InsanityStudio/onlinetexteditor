@@ -340,8 +340,6 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
       var fnInput = doc.getElementById('fileName');
       if (fnInput) {
         fnInput.value = file.name;
-        settings.fileName = file.name;
-        saveSettings();
       }
       
       ta.focus();
@@ -619,7 +617,6 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
     if (FONTS.indexOf(s.font) < 0) s.font = 'mono';
     s.size = normalizeSize(s.size);
     if (typeof s.customFont !== 'string') s.customFont = '';
-    if (typeof s.fileName !== 'string' || !s.fileName.trim()) s.fileName = 'text.txt';
     s.sameFooter = s.sameFooter !== false;
     return s;
   }
@@ -687,8 +684,6 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
       ci.hidden = !isCustom;
       if (isCustom && ci.value !== settings.customFont) ci.value = settings.customFont || '';
     }
-    var fn = doc.getElementById('fileName');
-    if (fn) fn.value = settings.fileName;
   }
 
   var sameFooterCb = doc.getElementById('sameFooter');
@@ -783,8 +778,6 @@ form{flex-direction:column-reverse;height:var(--vvh,100%)}
       var val = fileNameInput.value.trim();
       if (!val) val = 'text.txt';
       fileNameInput.value = val;
-      settings.fileName = val;
-      saveSettings();
     });
   }
 
